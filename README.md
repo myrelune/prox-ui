@@ -82,7 +82,7 @@ end, false)
 
 ### 8. Set up config saving
 ```lua
-ProxUI:SetConfig("ProxFolder", "config.json")
+Prox:SetConfig("ProxFolder", "config.json")
 ```
 Saves all toggle states, value box numbers, and dropdown selections. Automatically loads them back in next session.
 
@@ -125,6 +125,11 @@ end)
 
 full2:AddToggle("Show Notifications", function(val)
     print("Notifications:", val)
+end)
+
+local half1 = basicTab:CreateHalf()
+half1:AddButton("Destroy Map Debris", function()
+    print("Map Debris Destroyed")
 end)
 
 -- === Tab 2: Layout Showcase (Half Widths) ===
