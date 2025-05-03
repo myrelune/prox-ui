@@ -93,52 +93,86 @@ Saves all toggle states, value box numbers, and dropdown selections. Automatical
 local Prox = loadstring(game:HttpGet("https://raw.githubusercontent.com/myrelune/prox-ui/refs/heads/main/prox.lua"))()
 
 -- Set up config
-ProxUI:SetConfig("Prox Demo", "demo_config.json")
+Prox:SetConfig("Prox Demo", "demo_config.json")
 
 -- Create window
-local ui = Prox:CreateWindow("Demo")
+local ui = Prox:CreateWindow("Demo UI")
 
--- Tab 1: Full Width Sections
-local tab1 = ui:AddTab("Main")
-local full = tab1:CreateFull()
+-- === Tab 1: Basic Controls (Full Width) ===
+local basicTab = ui:AddTab("Basic")
 
-full:AddToggle("Enable Feature", function(val)
-    print("Feature Enabled:", val)
+local full1 = basicTab:CreateFull()
+full1:AddToggle("Enable System", function(val)
+    print("System Enabled:", val)
 end)
 
-full:AddButton("Print Message", function()
-    print("You clicked the button.")
+full1:AddDropdown("Theme", {"Dark", "Light", "Cyber"}, function(opt)
+    print("Selected Theme:", opt)
 end)
 
-full:AddValueBox("Speed", 1, 100, function(val)
-    print("Speed set to:", val)
+full1:AddButton("Apply Settings", function()
+    print("Settings Applied")
 end)
 
-full:AddDropdown("Color", {"Red", "Green", "Blue"}, function(val)
-    print("Selected color:", val)
+local full2 = basicTab:CreateFull()
+full2:AddValueBox("Volume", 0, 100, function(val)
+    print("Volume set to:", val)
 end)
 
--- Tab 2: Half Width Sections
-local tab2 = ui:AddTab("Advanced")
-local half1 = tab2:CreateHalf()
-local half2 = tab2:CreateHalf() -- Second half triggers divider
-
-half1:AddToggle("God Mode", function(v)
-    print("God Mode:", v)
+full2:AddDropdown("Mode", {"Easy", "Normal", "Hard"}, function(opt)
+    print("Game Mode:", opt)
 end)
 
-half1:AddValueBox("Jump Height", 10, 300, function(v)
-    print("Jump Height:", v)
+full2:AddToggle("Show Notifications", function(val)
+    print("Notifications:", val)
 end)
 
-half2:AddDropdown("Abilities", {"Dash", "Double Jump", "Invisibility"}, function(vals)
-    print("Selected Abilities:", table.concat(vals, ", "))
-end, true) -- multiSelect = true
+-- === Tab 2: Layout Showcase (Half Widths) ===
+local layoutTab = ui:AddTab("Layout")
 
-half2:AddButton("Reset Config", function()
-    ProxUI:ClearConfig()
-    print("Config wiped and reset.")
+-- Row 1 - One half
+local h1 = layoutTab:CreateHalf()
+h1:AddButton("Single Button", function()
+    print("Button Clicked")
 end)
 
-print("Prox demo loaded. Press 'U' to toggle UI.")
+-- Row 2 - Two halves
+local h2a = layoutTab:CreateHalf()
+local h2b = layoutTab:CreateHalf()
+
+h2a:AddToggle("ESP Enabled", function(val)
+    print("ESP:", val)
+end)
+h2a:AddValueBox("Range", 50, 1000, function(val)
+    print("Range:", val)
+end)
+
+h2b:AddDropdown("Display Type", {"Box", "Outline", "Name"}, function(val)
+    print("Display:", val)
+end)
+
+h2b:AddButton("Refresh ESP", function()
+    print("ESP Refreshed")
+end)
+
+-- Row 3 - Another single half (no paired half)
+local h3 = layoutTab:CreateHalf()
+h3:AddToggle("Silent Aim", function(v)
+    print("Silent Aim:", v)
+end)
+
+-- === Tab 3: Misc + Reset ===
+local miscTab = ui:AddTab("Other")
+
+local miscFull = miscTab:CreateFull()
+miscFull:AddDropdown("Languages", {"English", "Spanish", "French", "German"}, function(v)
+    print("Language:", v)
+end)
+
+miscFull:AddButton("Reset Config", function()
+    Prox:ClearConfig()
+    print("Config reset.")
+end)
+
+print("Prox demo loaded. Press 'U' to toggle the UI.")
 ```
