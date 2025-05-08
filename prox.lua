@@ -1,10 +1,8 @@
 local screenGui = Instance.new("ScreenGui")
-local parentGui = typeof(gethui) == "function" and gethui() or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 screenGui.Name = "PROX"
 screenGui.ResetOnSpawn = false
 screenGui.IgnoreGuiInset = true
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
-screenGui.Parent = parentGui
 
 local UIS = game:GetService("UserInputService")
 local HttpService = game:GetService("HttpService")
@@ -19,6 +17,17 @@ ProxUI._configData = {}
 local function makeConfigKey(str)
     return str:gsub("[^%w_]", ""):lower()
 end
+
+local function parentGui(gui)
+    local success, root = pcall(gethui)
+    if success and root then
+        gui.Parent = root
+    else
+        gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+    end
+end
+
+screenGui.Parent = parentGui()
 
 function ProxUI:CreateWindow(title)
     local self = {}
@@ -766,7 +775,8 @@ function ProxUI:CreateWindow(title)
             dropdownPadding.Parent = dropdownHolder
         
             local stateKey = makeConfigKey(title)
-
+        
+            -- Load from config
             if ProxUI._configData then
                 local saved = ProxUI._configData[stateKey]
                 if multiSelect and typeof(saved) == "table" then
