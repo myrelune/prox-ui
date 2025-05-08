@@ -8,6 +8,9 @@ local UIS = game:GetService("UserInputService")
 local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
 
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
 local ProxUI = {}
 
 ProxUI._configFolder = nil
@@ -18,27 +21,17 @@ local function makeConfigKey(str)
     return str:gsub("[^%w_]", ""):lower()
 end
 
-local parentGui
-do
-    local ok, res = pcall(function()
-        return gethui and gethui()
+local function tryGetHui()
+    local success, result = pcall(function()
+        -- Check if gethui exists and returns a valid instance
+        local hui = gethui and gethui()
+        return hui and hui:IsA("Instance") and hui
     end)
-    if ok and typeof(res) == "Instance" then
-        parentGui = res
-    else
-        -- fallback to PlayerGui
-        local player = game:GetService("Players").LocalPlayer
-        if player then
-            parentGui = player:FindFirstChildOfClass("PlayerGui") or player:WaitForChild("PlayerGui", 5)
-        end
-    end
+    return success and result or nil
 end
 
-if parentGui then
-    screenGui.Parent = parentGui
-else
-    warn("Parenting Failed")
-end
+local hui = tryGetHui()
+local guiParent = hui or playerGui
 
 function ProxUI:CreateWindow(title)
     local self = {}
