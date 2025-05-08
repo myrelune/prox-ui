@@ -23,9 +23,10 @@ end
 
 local function tryGetHui()
     local success, result = pcall(function()
-        -- Check if gethui exists and returns a valid instance
-        local hui = gethui and gethui()
-        return hui and hui:IsA("Instance") and hui
+        local hui = gethui()
+        if hui and hui:IsA("Instance") then
+            return hui
+        end
     end)
     return success and result or nil
 end
