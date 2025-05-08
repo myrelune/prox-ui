@@ -31,7 +31,7 @@ local function tryGetHui()
 end
 
 local hui = tryGetHui()
-local guiParent = hui or playerGui
+local screenGui.Parent = hui or playerGui
 
 function ProxUI:CreateWindow(title)
     local self = {}
