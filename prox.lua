@@ -18,16 +18,27 @@ local function makeConfigKey(str)
     return str:gsub("[^%w_]", ""):lower()
 end
 
-local function parentGui(gui)
-    local success, root = pcall(gethui)
-    if success and root then
-        gui.Parent = root
+local parentGui
+do
+    local ok, res = pcall(function()
+        return gethui and gethui()
+    end)
+    if ok and typeof(res) == "Instance" then
+        parentGui = res
     else
-        gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+        -- fallback to PlayerGui
+        local player = game:GetService("Players").LocalPlayer
+        if player then
+            parentGui = player:FindFirstChildOfClass("PlayerGui") or player:WaitForChild("PlayerGui", 5)
+        end
     end
 end
 
-screenGui.Parent = parentGui()
+if parentGui then
+    screenGui.Parent = parentGui
+else
+    warn("Parenting Failed")
+end
 
 function ProxUI:CreateWindow(title)
     local self = {}
