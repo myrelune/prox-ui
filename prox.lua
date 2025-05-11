@@ -689,7 +689,8 @@ function ProxUI:CreateWindow(title)
         
             box.FocusLost:Connect(function(enterPressed)
                 if not enterPressed then return end
-                local n = tonumber(box.Text)
+                local input = tonumber(box.Text)
+                n = (input ~= "" and input) or nil
                 if n then
                     n = math.clamp(n, min, max)
                     value = n
@@ -956,31 +957,57 @@ function ProxUI:CreateWindow(title)
             box.TextColor3 = Color3.fromRGB(255, 255, 255)
             box.Font = Enum.Font.SourceSans
             box.TextSize = 14
+            box.TextWrapped = false
+            box.TextScaled = false
+            box.ClearTextOnFocus = true
+            box.TextTruncate = Enum.TextTruncate.AtEnd
+            box.TextXAlignment = Enum.TextXAlignment.Left
+            box.ClipsDescendants = true
             box.ClearTextOnFocus = false
-            box.Text = defaultText or ""
             box.Parent = container
         
             Instance.new("UICorner", box).CornerRadius = UDim.new(0, 6)
+        
             local stroke = Instance.new("UIStroke")
             stroke.Color = Color3.fromRGB(100, 100, 100)
             stroke.Thickness = 1
+            stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
             stroke.Parent = box
         
+            local stateKey = makeConfigKey(title)
+            local value = defaultText or ""
+        
+            if ProxUI._configData and typeof(ProxUI._configData[stateKey]) == "string" then
+                value = ProxUI._configData[stateKey]
+            end
+        
+            box.Text = value
+        
             box.FocusLost:Connect(function(enterPressed)
-                if enterPressed and callback then
-                    callback(box.Text)
+                if enterPressed then
+                    local input = box.Text
+                    value = (input ~= "" and input) or nil
+                    if ProxUI._configData then
+                        ProxUI._configData[stateKey] = value
+                        ProxUI:_SaveConfig()
+                    end
+                    if callback then callback(value) end
                 end
             end)
         
             return {
-                Get = function() return box.Text end,
+                Get = function() return value end,
                 Set = function(v)
+                    value = v
                     box.Text = v
                     if callback then callback(v) end
+                    if ProxUI._configData then
+                        ProxUI._configData[stateKey] = v
+                        ProxUI:_SaveConfig()
+                    end
                 end
             }
         end
-        
         
         local sectionPadding = Instance.new("UIPadding")
         sectionPadding.PaddingTop = UDim.new(0, 12)
