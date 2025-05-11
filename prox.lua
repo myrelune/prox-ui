@@ -384,6 +384,10 @@ function ProxUI:CreateWindow(title)
             function api:AddDropdown(title, options, callback, multiSelect)
                 return tab:AddDropdown(title, options, callback, multiSelect, gridFrame)
             end
+
+            function api:AddTextBox(title, defaultText, callback)
+                return tab:AddTextBox(title, defaultText, callback, gridFrame)
+            end
         
             return api
         end
@@ -468,6 +472,10 @@ function ProxUI:CreateWindow(title)
             function api:AddDropdown(title, options, callback, multiSelect)
                 return tab:AddDropdown(title, options, callback, multiSelect, gridFrame)
             end
+
+            function api:AddTextBox(title, defaultText, callback)
+                return tab:AddTextBox(title, defaultText, callback, gridFrame)
+            end            
 
             local divider = Instance.new("Frame")
             divider.Size = UDim2.new(1, -24, 0, 1)
@@ -920,7 +928,59 @@ function ProxUI:CreateWindow(title)
                     saveToConfig()
                 end
             }
-        end        
+        end
+
+        function tab:AddTextBox(title, defaultText, callback, target)
+            local parent = target or layoutContainer
+        
+            local container = Instance.new("Frame")
+            container.Size = UDim2.new(1, 0, 0, 28)
+            container.BackgroundTransparency = 1
+            container.Parent = parent
+        
+            local label = Instance.new("TextLabel")
+            label.Size = UDim2.new(0.5, -12, 1, 0)
+            label.Position = UDim2.new(0, 0, 0, 0)
+            label.BackgroundTransparency = 1
+            label.TextColor3 = Color3.fromRGB(220, 220, 220)
+            label.Font = Enum.Font.SourceSans
+            label.TextSize = 14
+            label.TextXAlignment = Enum.TextXAlignment.Left
+            label.Text = title
+            label.Parent = container
+        
+            local box = Instance.new("TextBox")
+            box.Size = UDim2.new(0.5, 0, 1, 0)
+            box.Position = UDim2.new(0.5, 0, 0, 0)
+            box.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            box.TextColor3 = Color3.fromRGB(255, 255, 255)
+            box.Font = Enum.Font.SourceSans
+            box.TextSize = 14
+            box.ClearTextOnFocus = false
+            box.Text = defaultText or ""
+            box.Parent = container
+        
+            Instance.new("UICorner", box).CornerRadius = UDim.new(0, 6)
+            local stroke = Instance.new("UIStroke")
+            stroke.Color = Color3.fromRGB(100, 100, 100)
+            stroke.Thickness = 1
+            stroke.Parent = box
+        
+            box.FocusLost:Connect(function(enterPressed)
+                if enterPressed and callback then
+                    callback(box.Text)
+                end
+            end)
+        
+            return {
+                Get = function() return box.Text end,
+                Set = function(v)
+                    box.Text = v
+                    if callback then callback(v) end
+                end
+            }
+        end
+        
         
         local sectionPadding = Instance.new("UIPadding")
         sectionPadding.PaddingTop = UDim.new(0, 12)
